@@ -25,14 +25,16 @@ platform
         extension: process.env.RC_EXTENSION
     })
     .then(function(authResponse) {
-        console.log('RC authResponse: ', authResponse);
+        console.log('RC authResponse: ', authResponse.json());
+        init();
     })
     .catch(function(e) {
         console.error(e);
         throw e;
     });
 
-var subscription = rcsdk.createSubscription();
+//var subscription = rcsdk.createSubscription();
+var subscription;
 
 // Create Webhook/Subscription
 function startSubscription(eventFilterPayload) {
@@ -46,7 +48,7 @@ function startSubscription(eventFilterPayload) {
             }
         })
         .then(function(subscriptionResponse) {
-            console.log('Subscription Response: ', subscriptionResponse);
+            console.log('Subscription Response: ', subscriptionResponse.json());
             subscription = subscriptionResponse;
         })
         .catch(function(e) {
@@ -135,6 +137,7 @@ platform.on(platform.events.refreshSuccess, handleRefreshSuccess);
 platform.on(platform.events.refreshError, handleRefreshError);
 
 // Register Subscription Event Listeners
+/*
 subscription.on(subscription.events.notification, handleSubscriptionNotification);
 subscription.on(subscription.events.removeSuccess, handleRemoveSubscriptionSuccess);
 subscription.on(subscription.events.removeError, handleRemoveSubscriptionError);
@@ -142,6 +145,7 @@ subscription.on(subscription.events.renewSuccess, handleSubscriptionRenewSuccess
 subscription.on(subscription.events.renewError, handleSubscriptionRenewError);
 subscription.on(subscription.events.subscribeSuccess, handleSubscribeSuccess);
 subscription.on(subscription.events.subscribeError, handleSubscribeError);
+*/
 
 // Define Event Handlers
 function handleSubscriptionNotification(msg) {
