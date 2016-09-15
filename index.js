@@ -9,8 +9,7 @@ if('local' === process.env.RC_ENV) {
 const RC = require('ringcentral');
 const http = require('http');
 
-// App Vars
-var subscription;
+var server = http.createServer();
 
 // Instantiate RC-SDK
 var rcsdk = new RC({
@@ -34,6 +33,8 @@ platform
         console.error(e);
         throw e;
     });
+
+var subscription = rcsdk.createSubscription();
 
 // Create Webhook/Subscription
 function startSubscription(eventFilterPayload) {
