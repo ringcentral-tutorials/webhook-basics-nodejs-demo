@@ -1,9 +1,7 @@
 'use strict';
 
 // Load local environment variables
-if('local' === process.env.RC_ENV) {
-    require('dotenv').config();
-}
+require('dotenv').load();
 
 // Dependencies
 const RC = require('ringcentral');
@@ -205,6 +203,7 @@ function handleRefreshError(data) {
     login();
 }
 
+console.log('PORT: ', process.env.PORT);
 server.listen(process.env.PORT);
 server.on('listening', function() {
     console.log('Server is listening on port: ', process.env.PORT);
