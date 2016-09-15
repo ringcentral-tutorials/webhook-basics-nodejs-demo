@@ -17,6 +17,9 @@ var rcsdk = new RC({
 });
 
 var platform = rcsdk.platform();
+//var subscription = rcsdk.createSubscription();
+var subscription;
+
 
 platform
     .login({
@@ -25,7 +28,7 @@ platform
         extension: process.env.RC_EXTENSION
     })
     .then(function(authResponse) {
-        console.log('RC authResponse: ', authResponse.json());
+        //console.log('RC authResponse: ', authResponse.json());
         init();
     })
     .catch(function(e) {
@@ -33,12 +36,9 @@ platform
         throw e;
     });
 
-//var subscription = rcsdk.createSubscription();
-var subscription;
-
 // Create Webhook/Subscription
 function startSubscription(eventFilterPayload) {
-
+    //console.log('Event Filter Payload: ', eventFilterPayload);
     return platform.post('/subscription',
         {
             eventFilters: eventFilterPayload,
@@ -103,7 +103,7 @@ function createEventFilter(extensions) {
     var _eventFilters = [];
     for(var i = 0; i < extensions.length; i++) {
         var extension = extensions[i];
-        console.log('EXTENSION: ', extension);
+        //console.log('EXTENSION: ', extension);
         // BDean RC Starter Sandbox Account
         if(133128004 === extension.id) {
             _eventFilters.push(generatePresenceEventFilter(extension));
