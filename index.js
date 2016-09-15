@@ -38,10 +38,17 @@ platform
 
 // Create Webhook/Subscription
 function startSubscription(eventFilterPayload) {
-    //console.log('Event Filter Payload: ', eventFilterPayload);
+    console.log('Event Filter Payload: ', eventFilterPayload);
     return platform.post('/subscription',
         {
             eventFilters: eventFilterPayload,
+            /* referenced by developer in community post: https://devcommunity.ringcentral.com/ringcentraldev/topics/after-successfully-making-a-new-subscription-there-is-no-webhook-posted-while-the-ringout-call-is-in-progress
+            eventFilters: [
+                '/restapi/v1.0/account/~/extension',
+                '/restapi/v1.0/account/~/extension/~/presence?detailedTelephonyState=true&sipData=true',
+                '/restapi/v1.0/account/~/extension/~/presence/line/presence?detailedTelephonyState=true'
+            ],
+            */
             deliveryMode: {
                 transportType: process.env.DELIVERY_MODE_TRANSPORT_TYPE,
                 address: process.env.DELIVERY_MODE_ADDRESS + '?auth_token=' + process.env.WEBHOOK_TOKEN
@@ -104,14 +111,7 @@ function createEventFilter(extensions) {
     for(var i = 0; i < extensions.length; i++) {
         var extension = extensions[i];
         //console.log('EXTENSION: ', extension);
-        // BDean RC Starter Sandbox Account
-        if(133128004 === extension.id) {
-            _eventFilters.push(generatePresenceEventFilter(extension));
-        }
-        // BDean RC Starter Production Account
-        if(2557490012 === extension.id) {
-            _eventFilters.push(generatePresenceEventFilter(extension));
-        }
+        _eventFilters.push(generatePresenceEventFilter(extension));
     }
     //console.log('EVENT FILTERS: ', _eventFilters);
     return _eventFilters;
@@ -120,10 +120,10 @@ function createEventFilter(extensions) {
 function generatePresenceEventFilter(item) {
     //console.log("The item is :", item);
     if (!item) {
-        throw new Error('Message-Dispatcher Error: generatePresenceEventFilter requires a parameter');
+        throw new Error('generatePresenceEventFilter requires an extension');
     } else {
         console.log("The Presence Filter added for the extension :" + item.id + ' : /account/~/extension/' + item.id + '/presence?detailedTelephonyState=true&aggregated=true');
-        return '/account/~/extension/' + item.id + '/presence?detailedTelephonyState=true&aggregated=true';
+        return '/restapi/v1.0/account/~/extension/' + item.id + '/presence?detailedTelephonyState=true&aggregated=true';
     }
 }
 
@@ -221,5 +221,27 @@ server.on('error', function(err) {
 server.on('request', inboundRequest);
 
 function inboundRequest(req, res) {
-    console.log('Inbound Request');
+    var method = req.method;
+    var url = req.url;
+    var headers = req.headers;
+    var validationToken = headers['validation-token'];
+    var body = [];
+
+    // Reject stuff we do not want
+    if( 'POST' != method || '/webhooks?auth_token=ShouldBeASecureToken12344321' != url ) {
+        res.statusCode = 403; // Forbidden
+        res.end();
+    } else {
+        req.on('data', function(chunk) {
+            body.push(chunk);
+        }).on('end', function() {
+            body = Buffer.concat(body).toString();
+            console.log('BODY: ', body);
+            if(validationToken) {
+                res.setHeader('Validation-Token', validationToken);
+            }
+            res.statusCode = 200;
+            res.end(body);
+        });
+    }
 }
