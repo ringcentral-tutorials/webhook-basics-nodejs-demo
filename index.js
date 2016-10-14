@@ -51,7 +51,8 @@ function startSubscription(eventFilterPayload) {
             */
             deliveryMode: {
                 transportType: process.env.DELIVERY_MODE_TRANSPORT_TYPE,
-                address: process.env.DELIVERY_MODE_ADDRESS + '?auth_token=' + process.env.WEBHOOK_TOKEN
+                //address: process.env.DELIVERY_MODE_ADDRESS + '?auth_token=' + process.env.WEBHOOK_TOKEN
+                address: process.env.DELIVERY_MODE_ADDRESS
             }
         })
         .then(function(subscriptionResponse) {
@@ -240,7 +241,8 @@ function inboundRequest(req, res) {
     var body = [];
 
     // Reject stuff we do not want
-    if( 'POST' != method || '/webhooks?auth_token=ShouldBeASecureToken12344321' != url ) {
+    //if( 'POST' != method || '/webhooks?auth_token=ShouldBeASecureToken12344321' != url ) {
+    if( 'POST' != method || '/webhooks' != url ) {
         console.log( 'NOT POST -or- URL DOES NOT MATCH' );
         res.statusCode = 403; // Forbidden
         res.end();
