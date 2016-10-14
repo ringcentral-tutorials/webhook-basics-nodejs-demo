@@ -112,6 +112,7 @@ function createEventFilter(extensions) {
         var extension = extensions[i];
         //console.log('EXTENSION: ', extension);
         _eventFilters.push(generatePresenceEventFilter(extension));
+        _eventFilters.push(generateInstantMessageEventFilter(extension));
     }
     //console.log('EVENT FILTERS: ', _eventFilters);
     return _eventFilters;
@@ -126,6 +127,17 @@ function generatePresenceEventFilter(item) {
         return '/restapi/v1.0/account/~/extension/' + item.id + '/presence?detailedTelephonyState=true&aggregated=true';
     }
 }
+
+function generateInstantMessageEventFilter(item) {
+    //console.log("The item is :", item);
+    if (!item) {
+        throw new Error('generateInstantMessageEventFilter requires an extension');
+    } else {
+        console.log("The Instant Message Event Filter added for the extension :" + item.id + ' : /account/~/extension/' + item.id + '/message-store/instant?type=SMS');
+        return '/restapi/v1.0/account/~/extension/' + item.id + '/message-store/instant?type=SMS';
+    }
+}
+
 
 
 // Register Platform Event Listeners
@@ -229,9 +241,11 @@ function inboundRequest(req, res) {
 
     // Reject stuff we do not want
     if( 'POST' != method || '/webhooks?auth_token=ShouldBeASecureToken12344321' != url ) {
+        console.log( 'NOT POST -or- URL DOES NOT MATCH' );
         res.statusCode = 403; // Forbidden
         res.end();
     } else {
+        console.log( 'POST AND TOKEN MATCH, CONTINUING...' );
         req.on('data', function(chunk) {
             body.push(chunk);
         }).on('end', function() {
