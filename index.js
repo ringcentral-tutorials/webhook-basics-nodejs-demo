@@ -251,7 +251,7 @@ function inboundRequest(req, res) {
         if(validationToken) {
             res.setHeader('Validation-Token', validationToken);
             res.statusCode = 200;
-            res.end(body);
+            res.end();
         } else {
             req.on('data', function(chunk) {
                 body.push(chunk);
