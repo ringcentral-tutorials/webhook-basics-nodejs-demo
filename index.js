@@ -248,16 +248,19 @@ function inboundRequest(req, res) {
         res.end();
     } else {
         console.log( 'POST AND TOKEN MATCH, CONTINUING...' );
-        req.on('data', function(chunk) {
-            body.push(chunk);
-        }).on('end', function() {
-            body = Buffer.concat(body).toString();
-            console.log('BODY: ', body);
-            if(validationToken) {
-                res.setHeader('Validation-Token', validationToken);
-            }
+        if(validationToken) {
+            res.setHeader('Validation-Token', validationToken);
             res.statusCode = 200;
             res.end(body);
-        });
+        } else {
+            req.on('data', function(chunk) {
+                body.push(chunk);
+            }).on('end', function() {
+                body = Buffer.concat(body).toString();
+                console.log('BODY: ', body);
+                res.statusCode = 200;
+                res.end(body);
+            });
+        }
     }
 }
