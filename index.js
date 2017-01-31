@@ -1,7 +1,7 @@
 'use strict';
 
 // Load local environment variables
-require('dotenv').load();
+if('production' !== process.env.RC_ENV ) require('dotenv').load();
 
 // Dependencies
 const RC = require('ringcentral');
@@ -239,26 +239,34 @@ function inboundRequest(req, res) {
     var reqUrl = req.url;
     var queryData = url.parse(reqUrl, true).query;
     var headers = req.headers;
-    var validationToken = queryData.validationToken;
+    var validationToken = headers['validation-token'];
+    var signature = queryData.signature;
     var body = [];
 
     // Reject stuff we do not want
     //if( 'POST' != method || '/webhooks?auth_token=ShouldBeASecureToken12344321' != reqUrl ) {
     console.log('inboundRequest Received...');
     console.log('REQUEST: ', req);
-    if( 'POST' != method || '/webhooks' != reqUrl || !validationToken || validationToken !== '8777q89wgh487b08vawhm08a7ULIUBVOIU73goaiuwbrov') {
+    if( 'POST' != method || '/webhooks' != reqUrl) {
         console.log( 'NOT POST -or- URL DOES NOT MATCH' );
         res.statusCode = 403; // Forbidden
         res.end();
     } else {
         console.log( 'POST AND TOKEN MATCH, CONTINUING...' );
-        req.on('data', function(chunk) {
-            body.push(chunk);
-        }).on('end', function() {
-            body = Buffer.concat(body).toString();
-            console.log('BODY: ', body);
+        // Validation Token should only ever be presented while setting up the webhook (or perhaps while refreshing, need to confirm)
+        if(validationToken) {
+            res.setHeader('Validation-Token', validationToken);
             res.statusCode = 200;
-            res.end(body);
-        });
+            res.end();
+        } else {
+            req.on('data', function(chunk) {
+                body.push(chunk);
+            }).on('end', function() {
+                body = Buffer.concat(body).toString();
+                console.log('BODY: ', body);
+                res.statusCode = 200;
+                res.end(body);
+            });
+        }
     }
 }
