@@ -246,15 +246,16 @@ function inboundRequest(req, res) {
     // Reject stuff we do not want
     //if( 'POST' != method || '/webhooks?auth_token=ShouldBeASecureToken12344321' != reqUrl ) {
     console.log('inboundRequest Received...');
-    console.log('REQUEST: ', req);
+    //console.log('REQUEST: ', req);
     if( 'POST' != method || '/webhooks' != reqUrl) {
-        console.log( 'NOT POST -or- URL DOES NOT MATCH' );
+        console.log( 'Invalid Request: NOT POST -or- URL DOES NOT MATCH' );
         res.statusCode = 403; // Forbidden
         res.end();
     } else {
         console.log( 'POST AND TOKEN MATCH, CONTINUING...' );
         // Validation Token should only ever be presented while setting up the webhook (or perhaps while refreshing, need to confirm)
         if(validationToken) {
+            console.log('Responding to RingCentral as last leg to create new Webhook');
             res.setHeader('Validation-Token', validationToken);
             res.statusCode = 200;
             res.end();
@@ -263,7 +264,7 @@ function inboundRequest(req, res) {
                 body.push(chunk);
             }).on('end', function() {
                 body = Buffer.concat(body).toString();
-                console.log('BODY: ', body);
+                console.log('WEBHOOK EVENT BODY: ', body);
                 res.statusCode = 200;
                 res.end(body);
             });
