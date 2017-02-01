@@ -20,10 +20,13 @@ This application is built to help provide developers with a clear understanding 
 
 ## Operation
 
-* Deploy to your webserver or start ngrok
+* Deploy to your webserver or start `ngrok`
+* If using `ngrok` and running locally, you will need to update the Environment Variable `DELIVERY_MODE_ADDRESS` to be the URI which ngrok provides you + `/webhooks`
 * `npm start`
 
 You should see the subscription start, and an initial POST request for the webhooks, then you can use the RingCentral Soft Phone to make/take calls, SMS, fax, and change your status. You should see events in the log.
+
+Without modification, this code will retrieve a list of all User-Enabled Extensions in your RingCentral account and create eventFilters for each. Then as these [Notification Types](https://developers.ringcentral.com/api-docs/latest/index.html#!#EventTypes.html) are received by this application, it logs them to the console (or any errors if encountered).
 
 ## License
 
