@@ -1,0 +1,75 @@
+{
+    "name": "rc-webhook-demo",
+    "description": "Demo application for RingCentral Developers to use Webhooks to watch for all event types on all extensions in their RingCentral accounts.",
+    "keywords": [
+        "demo",
+        "RingCentral",
+        "ringcentral",
+        "push notifications",
+        "webhooks",
+        "events"
+    ],
+    "website": "https://developers.ringcentral.com",
+    "repository": "https://github.com/bdeanindy/ringcentral-webhook-basics",
+    "logo": "https://raw.githubusercontent.com/bdeanindy/ringcentral-subscription-basics/master/rc4d_logo_2016.png",
+    "formation": [
+        {
+            "process": "web",
+            "quantity": 1
+        }
+    ],
+    "env": {
+        "RC_APP_NAME": {
+            "description": "For developer reference only",
+            "required": false
+        },
+        "RC_ENV": {
+            "description": "Will this be operating with a RingCentral Sandbox or Production account? accepts either: 'sandbox' or 'production'",
+            "required": true,
+            "value": "sandbox"
+        },
+        "RC_APP_KEY": {
+            "description": "Your RingCentral Application Key from the Developer Portal",
+            "required": true
+        },
+        "RC_APP_SECRET": {
+            "description": "Your RingCentral Application Secret from the Developer Portal",
+            "required": true
+        },
+        "RC_USERNAME": {
+            "description": "Your RingCentral Account Administrative Username (phone number). Expected format: [countryCode][numberWithoutSpecialCharactersParensOrHyphens], example: 12345678901",
+            "required": true
+        },
+        "RC_PASSWORD": {
+            "description": "Your RingCentral Account Administrative User Password",
+            "required": true
+        },
+        "RC_EXTENSION": {
+            "description": "Your RingCentral Account Administrative User Extension Number",
+            "required": false
+        },
+        "RC_CACHE_PREFIX": {
+            "description": "The cache prefix to use if you modify the source code to implement multiple instances of the SDK for different subscriptions across accounts",
+            "required": false
+        },
+        "DELIVERY_MODE_ADDRESS": {
+            "description": "The URL where your webhook events will be posted, example: https://{{YOUR_HEROKU_APP_NAME}}.herokuapp.com/webhooks",
+            "required": true
+        },
+        "DELIVERY_MODE_TRANSPORT_TYPE": {
+            "description": "The type of transport your Push Notification will use, since we are using Webhooks the default is 'Webhooks'",
+            "required": true
+            "value": "WebHook"
+        },
+        "SIGNATURE": {
+            "description": "A random string should be used to invalidate inbound Webhook source request validity",
+            "required": true
+            "generator": "secret"
+        },
+        "EXTENSIONS_PER_PAGE": {
+            "description": "Number of Extensions to request per page, default number is optimal value for loading speed and performance. Lower numbers boot faster.",
+            "required": true,
+            "value": "500"
+        }
+    }
+}
