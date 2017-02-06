@@ -58,12 +58,12 @@
         },
         "DELIVERY_MODE_TRANSPORT_TYPE": {
             "description": "The type of transport your Push Notification will use, since we are using Webhooks the default is 'Webhooks'",
-            "required": true
+            "required": true,
             "value": "WebHook"
         },
         "SIGNATURE": {
             "description": "A random string should be used to invalidate inbound Webhook source request validity",
-            "required": true
+            "required": true,
             "generator": "secret"
         },
         "EXTENSIONS_PER_PAGE": {
