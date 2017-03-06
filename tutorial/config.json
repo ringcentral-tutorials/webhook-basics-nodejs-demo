@@ -1,0 +1,6 @@
+{
+    "title": "Demo app for RingCentral Webhook Basics",
+    "repo": "ringcentral-tutorials/webhook-basics-nodejs-demo",
+    "description": "Learn how webhooks operate with RingCentral",
+    "heroku": true
+}
