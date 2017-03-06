@@ -135,7 +135,7 @@ var CodeView = Backbone.View.extend({
         self.editor.$blockScrolling = Infinity;
         self.editor.setBehavioursEnabled(false);
         self.editor.setWrapBehavioursEnabled(false);
-        self.editor.setTheme('ace/theme/crimsomeditor');
+        self.editor.setTheme('ace/theme/monokai');
         self.editor.renderer.setScrollMargin(0,8, 0, 8);
         self.editor.getSession().setWrapLimitRange();
         // Disable syntax checker

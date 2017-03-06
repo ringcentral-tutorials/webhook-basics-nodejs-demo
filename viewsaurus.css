@@ -1121,9 +1121,6 @@
 #viewsaurus .saurus-code .saurus-editor {
   border-top: 1px solid #e8e8e8;
 }
-#viewsaurus .saurus-code .ace_editor {
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
-}
 #viewsaurus .saurus-code .ace_gutter-layer {
   background-color: #ffffff;
   border-right: 1px solid #e8e8e8;
@@ -1202,9 +1199,6 @@
 }
 #viewsaurus .saurus-explorer a.explorer-get-code {
   color: #585858;
-}
-.ace-monokai .ace_indent-guide {
-  opacity: 0.2;
 }
 ul,
 ol {
