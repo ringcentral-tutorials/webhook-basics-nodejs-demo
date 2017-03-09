@@ -9,6 +9,44 @@
 var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(r){var t,e,o,a,h,n,c,d="",C=0;for(r=Base64._utf8_encode(r);C<r.length;)t=r.charCodeAt(C++),e=r.charCodeAt(C++),o=r.charCodeAt(C++),a=t>>2,h=(3&t)<<4|e>>4,n=(15&e)<<2|o>>6,c=63&o,isNaN(e)?n=c=64:isNaN(o)&&(c=64),d=d+this._keyStr.charAt(a)+this._keyStr.charAt(h)+this._keyStr.charAt(n)+this._keyStr.charAt(c);return d},decode:function(r){var t,e,o,a,h,n,c,d="",C=0;for(r=r.replace(/[^A-Za-z0-9\+\/\=]/g,"");C<r.length;)a=this._keyStr.indexOf(r.charAt(C++)),h=this._keyStr.indexOf(r.charAt(C++)),n=this._keyStr.indexOf(r.charAt(C++)),c=this._keyStr.indexOf(r.charAt(C++)),t=a<<2|h>>4,e=(15&h)<<4|n>>2,o=(3&n)<<6|c,d+=String.fromCharCode(t),64!=n&&(d+=String.fromCharCode(e)),64!=c&&(d+=String.fromCharCode(o));return d=Base64._utf8_decode(d)},_utf8_encode:function(r){r=r.replace(/\r\n/g,"\n");for(var t="",e=0;e<r.length;e++){var o=r.charCodeAt(e);128>o?t+=String.fromCharCode(o):o>127&&2048>o?(t+=String.fromCharCode(o>>6|192),t+=String.fromCharCode(63&o|128)):(t+=String.fromCharCode(o>>12|224),t+=String.fromCharCode(o>>6&63|128),t+=String.fromCharCode(63&o|128))}return t},_utf8_decode:function(r){for(var t="",e=0,o=c1=c2=0;e<r.length;)o=r.charCodeAt(e),128>o?(t+=String.fromCharCode(o),e++):o>191&&224>o?(c2=r.charCodeAt(e+1),t+=String.fromCharCode((31&o)<<6|63&c2),e+=2):(c2=r.charCodeAt(e+1),c3=r.charCodeAt(e+2),t+=String.fromCharCode((15&o)<<12|(63&c2)<<6|63&c3),e+=3);return t}};
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var GoogleAnalytics = function (id) {
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', id, 'auto');
+    this.trackPage = function (url, percentage, step) {
+        var title = window.tutorialName || document.title;
+        ga('set', 'dimension1', title);
+        ga('set', 'dimension2', percentage);
+        ga('set', 'dimension3', url);
+        ga('set', 'dimension4', step);
+        // var eventData = {
+        //     'url': url,
+        //     'title': title,
+        //     'step': step,
+        //     'completedPercentage': percentage
+        // };
+        //
+        ga('send', 'pageview', {
+            'dimension1': title,
+            'dimension2': percentage,
+            'dimension3': url,
+            'dimension4': step
+        });
+    };
+};
+
+module.exports = GoogleAnalytics;
+},{}],2:[function(require,module,exports){
 var Router = Backbone.Router.extend({
     routes: {
         ':stepIndex': 'doRoute'
@@ -34,7 +72,7 @@ var Router = Backbone.Router.extend({
 });
 
 module.exports = Router;
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var ViewsaurusView = require('./views/ViewsaurusView');
 var Router = require('./Router');
 
@@ -84,15 +122,19 @@ module.exports = Backbone.Model.extend({// Initialize model and app
     }
 });
 
-},{"./Router":1,"./views/ViewsaurusView":7}],3:[function(require,module,exports){
+},{"./Router":2,"./views/ViewsaurusView":8}],4:[function(require,module,exports){
 var Viewsaurus = require('./Viewsaurus');
+var GoogleAnalytics = require('./GoogleAnalytics');
 
-$(function() {
+$(function () {
+    // create GA client
+    window.GAClient = new GoogleAnalytics("UA-57519112-3");
+    GAClient.trackPage(location.href, 0, 0);
     // create global viewsaurus object
     window.viewsaurus = new Viewsaurus();
 });
 
-},{"./Viewsaurus":2}],4:[function(require,module,exports){
+},{"./GoogleAnalytics":1,"./Viewsaurus":3}],5:[function(require,module,exports){
 var Range = ace.require('ace/range').Range;
 var explorerWidth = 270;
 
@@ -269,7 +311,7 @@ var CodeView = Backbone.View.extend({
 });
 
 module.exports = CodeView;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var explorerWidth = -270;
 var autoShowExplorer = 1280;
 
@@ -417,7 +459,7 @@ var ExplorerView = Backbone.View.extend({
 });
 
 module.exports = ExplorerView;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 // Get Title for a step either from a data attribute or the first title tag
 function titleForStep($e) {
     var title = $e.attr('data-title');
@@ -450,11 +492,11 @@ var ProseView = Backbone.View.extend({
         'click .saurus-start a': 'hideStart',
         'click .saurus-content img': 'showLightbox',
         'click .nav-previous': 'previous',
-        'click .nav-next': 'next' 
+        'click .nav-next': 'next'
     },
 
     // Initialize UI
-    initialize: function(options) {
+    initialize: function (options) {
         var self = this;
 
         // Store a reference to main app model and create view model
@@ -482,35 +524,35 @@ var ProseView = Backbone.View.extend({
 
         // On any history event, we want to hide the start screen
         Backbone.history.on('all', self.hideStart, self);
-    
+
         // Subscribe to model updates
         self.app.on('change:stepIndex', self.stepChanged, self);
         self.model.on('change:overviewShown', self.overviewChanged, self);
     },
 
     // Analytics - fire event on main app for next/previous
-    next: function() {
+    next: function () {
         var self = this;
         self.app.trigger('next');
     },
 
-    previous: function() {
+    previous: function () {
         var self = this;
         self.app.trigger('previous');
     },
 
     // Show a lightbox when an image is clicked
-    showLightbox: function(e) {
+    showLightbox: function (e) {
         var $img = $(e.currentTarget);
         $.featherlight($img.attr('src'));
     },
 
     // Hide the initial start prompt
-    hideStart: function() {
+    hideStart: function () {
         var self = this;
         if (!self.startFired) {
             // Defer to allow page listeners to register
-            _.defer(function() {
+            _.defer(function () {
                 self.app.trigger('start');
             });
             self.startFired = false;
@@ -519,12 +561,12 @@ var ProseView = Backbone.View.extend({
     },
 
     // Show the next step title
-    showNextStep: function(index) {
+    showNextStep: function (index) {
         var self = this;
         var text = "You did it! Good for you :)";
         if (index < self.app.totalSteps) {
             var $next = self.$content.find('.step').eq(index);
-            var truncated = titleForStep($next).substring(0,35);
+            var truncated = titleForStep($next).substring(0, 35);
             if (truncated.length > 34) {
                 truncated += '...';
             }
@@ -534,7 +576,7 @@ var ProseView = Backbone.View.extend({
     },
 
     // toggle overview shown on view model on button click
-    toggleOverview: function() {
+    toggleOverview: function () {
         var self = this;
         if (!self.model.get('overviewShown')) {
             self.app.trigger('show_overview');
@@ -543,20 +585,20 @@ var ProseView = Backbone.View.extend({
     },
 
     // Handle an updated step
-    stepChanged: function() {
+    stepChanged: function () {
         var self = this;
         var stepIndex = self.app.get('stepIndex');
         var $step = self.$el.find('.step').eq(stepIndex);
 
         // Update next step text
-        self.showNextStep(stepIndex+1);
+        self.showNextStep(stepIndex + 1);
 
         // Hide overview if it is showing
         self.model.set('overviewShown', false);
 
         // Update progress bar
         self.$progressBar.animate({
-            width: (((stepIndex+1) / self.app.totalSteps) * 100) + '%'
+            width: (((stepIndex + 1) / self.app.totalSteps) * 100) + '%'
         });
 
         // Update to the proper prose section
@@ -575,7 +617,7 @@ var ProseView = Backbone.View.extend({
         // Update next nav link
         if (self.app.hasNext()) {
             self.$next.addClass('clickable')
-                .find('a').attr('href', '#' + (self.app.get('stepIndex')+1));
+                .find('a').attr('href', '#' + (self.app.get('stepIndex') + 1));
         } else {
             // If there's no next step, we've reached the end for the first time
             if (!self.lastStepReached) {
@@ -589,27 +631,32 @@ var ProseView = Backbone.View.extend({
         // Update previous nav link
         if (self.app.hasPrevious()) {
             self.$previous.addClass('clickable')
-                .find('a').attr('href', '#' + (self.app.get('stepIndex')-1));
+                .find('a').attr('href', '#' + (self.app.get('stepIndex') - 1));
         } else {
             self.$previous.removeClass('clickable')
                 .find('a').attr('href', '#0');
         }
+
+        if (window.GAClient) {
+            var currentStep = stepIndex + 1;
+            window.GAClient.trackPage(location.href, ((currentStep / self.app.totalSteps).toFixed(3) * 100) + '%', currentStep);
+        }
     },
 
     // Handle overview show/hide
-    overviewChanged: function() {
+    overviewChanged: function () {
         var self = this;
         var shown = self.model.get('overviewShown');
 
         if (shown) {
             self.$overviewContent.animate({
-                left:0
+                left: 0
             });
             self.$overviewNav.addClass('fa-close')
                 .removeClass('icon-menu');
         } else {
             self.$overviewContent.animate({
-                left:'-100%'
+                left: '-100%'
             });
             self.$overviewNav.removeClass('fa-close')
                 .addClass('icon-menu');
@@ -617,14 +664,14 @@ var ProseView = Backbone.View.extend({
     },
 
     // populate overview from data in the DOM
-    populateOverview: function() {
+    populateOverview: function () {
         var self = this;
         var html = '';
         var firstChapter = true;
         var stepIndex = 0;
 
         // Iterate over chapters, extract data, build overview HTML
-        self.$content.find('.chapter, .step').each(function() {
+        self.$content.find('.chapter, .step').each(function () {
             var $thing = $(this);
             if ($thing.hasClass('chapter')) {
                 if (!firstChapter) {
@@ -651,7 +698,7 @@ var ProseView = Backbone.View.extend({
 });
 
 module.exports = ProseView;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var ProseView = require('./ProseView');
 var CodeView = require('./CodeView');
 var ExplorerView = require('./ExplorerView');
@@ -671,4 +718,4 @@ var ViewsaurusView = Backbone.View.extend({
 });
 
 module.exports = ViewsaurusView;
-},{"./CodeView":4,"./ExplorerView":5,"./ProseView":6}]},{},[3]);
+},{"./CodeView":5,"./ExplorerView":6,"./ProseView":7}]},{},[4]);
