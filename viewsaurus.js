@@ -23,24 +23,25 @@ var GoogleAnalytics = function (id) {
     })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
     ga('create', id, 'auto');
-    this.trackPage = function (url, percentage, step) {
+    this.trackPage = function (url, percentage, step, totalSteps) {
+
         var title = window.tutorialName || document.title;
+        var clientId = ga.getAll()[0].get('clientId');
+
         ga('set', 'dimension1', title);
         ga('set', 'dimension2', percentage);
         ga('set', 'dimension3', url);
         ga('set', 'dimension4', step);
-        // var eventData = {
-        //     'url': url,
-        //     'title': title,
-        //     'step': step,
-        //     'completedPercentage': percentage
-        // };
-        //
+        ga('set', 'dimension5', totalSteps);
+        ga('set', 'dimension6', clientId);
+
         ga('send', 'pageview', {
             'dimension1': title,
             'dimension2': percentage,
             'dimension3': url,
-            'dimension4': step
+            'dimension4': step,
+            'dimension5': totalSteps,
+            'dimension6': clientId
         });
     };
 };
@@ -129,7 +130,9 @@ var GoogleAnalytics = require('./GoogleAnalytics');
 $(function () {
     // create GA client
     window.GAClient = new GoogleAnalytics("UA-57519112-3");
-    GAClient.trackPage(location.href, 0, 0);
+    var totalSteps = $('.saurus-prose .step').length;
+
+    GAClient.trackPage(location.href, 0, 0, totalSteps);
     // create global viewsaurus object
     window.viewsaurus = new Viewsaurus();
 });
@@ -639,7 +642,7 @@ var ProseView = Backbone.View.extend({
 
         if (window.GAClient) {
             var currentStep = stepIndex + 1;
-            window.GAClient.trackPage(location.href, ((currentStep / self.app.totalSteps).toFixed(3) * 100) + '%', currentStep);
+            window.GAClient.trackPage(location.href, ((currentStep / self.app.totalSteps).toFixed(3) * 100) + '%', currentStep, self.app.totalSteps);
         }
     },
 
