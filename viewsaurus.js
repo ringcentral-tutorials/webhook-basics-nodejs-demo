@@ -26,22 +26,27 @@ var GoogleAnalytics = function (id) {
     this.trackPage = function (url, percentage, step, totalSteps) {
 
         var title = window.tutorialName || document.title;
-        var clientId = ga.getAll()[0].get('clientId');
+
 
         ga('set', 'dimension1', title);
         ga('set', 'dimension2', percentage);
         ga('set', 'dimension3', url);
         ga('set', 'dimension4', step);
         ga('set', 'dimension5', totalSteps);
-        ga('set', 'dimension6', clientId);
+
+
+        ga(function() {
+            var clientId = ga.getAll()[0].get('clientId');
+            ga('set', 'dimension6', clientId);
+            ga('send', 'pageview',{'dimension6' : clientId})
+        });
 
         ga('send', 'pageview', {
             'dimension1': title,
             'dimension2': percentage,
             'dimension3': url,
             'dimension4': step,
-            'dimension5': totalSteps,
-            'dimension6': clientId
+            'dimension5': totalSteps
         });
     };
 };
